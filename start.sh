@@ -47,9 +47,9 @@ until $(curl --output /dev/null --silent --head --fail localhost:9002); do
 done
 
 # install/reinstall main packages
-cozy-monitor install data-system
-cozy-monitor install home
-cozy-monitor install proxy
+cozy-monitor start data-system
+cozy-monitor start home
+cozy-monitor start proxy
 
 # check host if defined in env
 if [ -n "$COZY_HOST" ]; then
