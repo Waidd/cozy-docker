@@ -1,6 +1,8 @@
 #!/bin/bash
 
-curl -s couchdb:5984 || { echo  "CouchDB is NOT running"; exit 1; }
+# Check if CouchDB is running
+curl --output /dev/null --silent --head --fail --retry 5 --retry-delay 5 couchdb:5984 || { echo  "CouchDB is NOT running"; exit 1; }
+echo "CouchDB is up and running"
 
 # start postfix
 service postfix start
