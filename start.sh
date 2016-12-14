@@ -2,6 +2,9 @@
 
 curl -s couchdb:5984 || { echo  "CouchDB is NOT running"; exit 1; }
 
+# start postfix
+service postfix start
+
 # generate login/password token for couchdb and set them if they does not exists
 if [ ! -f /etc/cozy/couchdb.login ]; then
   echo "Generate couchdb.login"

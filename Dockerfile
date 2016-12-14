@@ -1,8 +1,10 @@
 FROM node:6-slim
 
-RUN apt-get update \
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && apt-get update \
     && apt-get install --quiet --assume-yes --no-install-recommends \
       python \
+      postfix \
       openssl \
       git \
       imagemagick \
