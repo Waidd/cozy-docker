@@ -5,7 +5,7 @@ curl --output /dev/null --silent --head --fail --retry 5 --retry-delay 5 couchdb
 echo "CouchDB is up and running"
 
 # start postfix
-service postfix start
+postfix start
 
 # generate login/password token for couchdb and set them if they does not exists
 if [ ! -f /etc/cozy/couchdb.login ]; then
