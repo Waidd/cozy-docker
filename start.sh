@@ -51,6 +51,9 @@ cozy-monitor start data-system
 cozy-monitor start home
 cozy-monitor start proxy
 
+# reinstall missing app in the case of a relocation
+cozy-monitor reinstall-missing-app
+
 # check host if defined in env
 if [ -n "$COZY_HOST" ]; then
   coffee /usr/local/cozy/apps/home/commands.coffee setdomain $COZY_HOST

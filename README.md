@@ -13,17 +13,19 @@ More informations on [Cozy website](https://cozy.io).
 * Install Docker
 * Fetch cozy-docker image:
 ```bash
-sudo docker pull waidd/cozy-docker
+sudo docker pull waidd/cozy
 ```
 * Or build it manually by running:
 ```bash
 sudo docker build -t waidd/cozy github.com/waidd/cozy-docker
 ```
 
+Access tokens are generated at the first launch, so you don't need to build the image yourself.
+
 ## Usage
 ### CouchDB
 
-Cozy need a CouchDB database. You can get it this way :
+In order to set his own credentials, Cozy need a dedicated CouchDB database. You can get one this way :
 
 * Fetch CouchDB image:
 ```bash
@@ -34,9 +36,12 @@ sudo docker pull couchdb
 sudo docker run
   --detach \
   --restart=always \
+  --volume /path/to/your/backup/couchdb:/usr/local/var/lib/couchdb # optional: backup of your database
   --name cozy-couchdb \
   couchdb
 ```
+
+Logs are available with the following command: `sudo docker logs cozy-couchdb`.
 
 ### Cozy
 
@@ -46,12 +51,17 @@ sudo docker run \
   --detach \
   --restart=always \
   --publish 9104:9104 \
+  --volume /path/to/your/backup/cozy:/etc/cozy #optional: backup of your database credentials
+  --volume /path/to/your/log/cozy/apps:/usr/local/var/log/cozy # optional: quick access to your apps logs
   --link cozy-couchdb:couchdb \
   --name cozy \
-  waidd/cozy-docker
+  waidd/cozy
 ```
 
-Initialization will take some time.
+The first launch may be long as cozy need to install some dependencies.
+
+Logs of the applications are available in your `/path/to/your/log/apps` directory.
+Logs of the controller can be obtained with the command: `sudo docker logs cozy`
 
 ### Reverse Proxy
 
@@ -88,8 +98,26 @@ server {
 }
 ```
 
-## TODO List
+##  Update / Migrate / Backup
 
-- [ ] Describe how to save data.
-- [ ] Don't expose port ?
-- [ ] Expose API port ?
+### Update
+
+#### Couchdb
+
+Be sure that the `/usr/local/var/lib/couchdb` directory of your couchdb container is stored on your host system.
+Stop and delete both your couchdb and Cozy containers, update your image and then recreate them.
+The Cozy container will set new credentials and reinstall all your applications.
+
+#### Cozy
+
+Be sure that the `/etc/cozy` directory of your Cozy container is stored on your host system.
+Stop and delete your Cozy container, update your image and then recreate it. It will reuse your credentials and reinstall all your applications.
+
+### Backup / Restore
+
+Cozy's revelant data are stored in the `/usr/local/var/lib/couchdb` directory of your couchdb container. You just have to backup it and you are good.
+To restore your data, start a new couchdb container using your backup directory, then start a new cozy container.
+
+### Migrate
+
+In order to migrate your Cozy stack from a server to another, you just have to transfer your previous backup and start new containers using it.
